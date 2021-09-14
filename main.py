@@ -36,11 +36,17 @@ while isCorrectFile == False:
 (myIds, isCorrectFile) = myDoc.get_ids_form_sheet_name(file_constants.SHEET_NAME, file_constants.CELL_NAME)
 
 if(isCorrectFile == False):
-    print("La hoja no tiene el nombre correcto")
+    print(Messages.MESS_NOT_FOUND_LIST)
 else:
     #si tiene el nombre correcto y hemos pillado id's, tonces ahora viene lo chungo-chungo, pillar las bm
     dict_full = myDoc.get_complete_list(myDoc.doc.worksheets[0], myIds)
-    myDoc.set_values_to_document(file_constants.SHEET_NAME, dict_full)
-    file_io.save_workbook(path, myDoc.doc)
+
+    if len(dict_full) == 0:
+        print(Messages.MESS_NOT_FOUND_COLUMN)
+    else:
+        myDoc.set_values_to_document(file_constants.SHEET_NAME, dict_full)
+        file_io.save_workbook(path, myDoc.doc)
+
+input(Messages.PRESS_KEY_EXIT)
 
 

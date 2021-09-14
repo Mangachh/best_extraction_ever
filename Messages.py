@@ -6,6 +6,7 @@ INSTRUCTIONS = ("Primero tienes que crear una hoja llamada \"LISTA\".\n"
                 "Si tienes más dudas, abre el archivo \"LÉEME\"\n")
 END = "Pues ya está. Si Tenias la hoja abierta, ciérrala SIN guardar los cambios y vuelve a abrirla."
 
+PRESS_KEY_EXIT = "Presiona cualquier tecla para salir"
 
 PATH_ERROR_FILE = "El archivo no existe."
 PATH_ENTER = "Introduce la ruta completa del archivo."
@@ -15,6 +16,8 @@ MESS_WRITTING = "\n\n*** Escribiendo los valores en la hoja de Excel ***\n"
 MESS_SEARCH = "\n\n*** Buscando los valores por cada HC ***\n"
 MESS_GOT_FILE = "Archivo encontrado y abierto."
 MESS_FAILED = "Algo ha fallado!!"
+MESS_NOT_FOUND_LIST = "No se ha encontrado la hoja con nombre \"LISTA\""
+MESS_NOT_FOUND_COLUMN ="No se ha encontrado la columna \"BUSCAR\" en la hoja \"LISTA\" o bien no hay ningún valor en la hoja"
 
 BORDER = "+-----------------------------------------------------+"
 
