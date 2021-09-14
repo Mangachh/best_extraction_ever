@@ -41,6 +41,9 @@ else:
     #si tiene el nombre correcto y hemos pillado id's, tonces ahora viene lo chungo-chungo, pillar las bm
     dict_full = myDoc.get_complete_list(myDoc.doc.worksheets[0], myIds)
 
+    #borramos el diccionario porque no nos interesa
+    myIds.clear()
+
     if len(dict_full) == 0:
         print(Messages.MESS_NOT_FOUND_COLUMN)
     else:
