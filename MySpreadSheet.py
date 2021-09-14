@@ -133,7 +133,6 @@ class MySpreadSheet:
         for col in columns:
             index += 1
             tempCell = sheet.cell(row, col)
-            print(tempCell.value)
             if tempCell.value is None:
                 break
             elif type(tempCell.value) is str:
