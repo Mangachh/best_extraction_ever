@@ -46,7 +46,7 @@ else:
     else:
         myDoc.set_values_to_document(file_constants.SHEET_NAME, dict_full)
         file_io.save_workbook(path, myDoc.doc)
-
+del myDoc
 input(Messages.PRESS_KEY_EXIT)
 
 

@@ -94,6 +94,8 @@ class MySpreadSheet:
         # ahora columna bis
         (row, bisCol, isTrue) = self.__get_row_column_by_value(file_constants.CELL_BIS_NAME, sheet)
 
+        #ahora el número de las columnas donde estan las extracciones
+        extract_cols = self.__get_all_ng_columns(sheet, file_constants.CELL_NG_NAME)
         # ahora, por cada fila de la columna del esquimot, miramos si el valor es igual a cualquiera de la lista
         # sumamos uno al row porque doy por hecho que la primera fila es la del título.
         for cells in sheet.iter_rows(min_row=row+1, min_col=hcCol, max_col=hcCol):
@@ -114,7 +116,7 @@ class MySpreadSheet:
                     samCell = sheet.cell(cells[0].row, samCol)
 
                     # ahora hacemos una tupla con el nombre de extracción (e1, e2,...) y el valor
-                    (ext_name, ext_value) = self.__get_best_extraction(sheet, cells[0].row)
+                    (ext_name, ext_value) = self.__get_best_extraction(sheet, cells[0].row, extract_cols)
 
                     # miramos si tiene "BM Bis Code" para saber si está repetido
                     bisCell = sheet.cell(cells[0].row, bisCol)
@@ -128,6 +130,7 @@ class MySpreadSheet:
                         # TODO meter un tipo de constantes para esto o algo así
                         if final_dict.__contains__(myIds[0]) and final_dict[myIds[0]][3] > ext_value:
                             continue
+
                         #end
                     #end
 
@@ -135,18 +138,19 @@ class MySpreadSheet:
 
         return final_dict
 
-    def __get_best_extraction(self, sheet, row: int) -> (str, int):
-        # pilla los índices de las columnas
-        columns = self.__get_all_ng_columns(sheet, file_constants.CELL_NG_NAME)
+    def __get_best_extraction(self, sheet, row: int, columns: list) -> (str, int):
         # iniciamos tupla, así es más facil
         (name, value) = ("a", 0)
         index = 0
 
+        #por cada columna en la que pillemos algo (oju, esto lo podriamos hacer de otro mod
         for col in columns:
             index += 1
             tempCell = sheet.cell(row, col)
             if tempCell.value is None:
                 break
+            elif sheet.cell(row, col - 1).value is not None:
+                continue
             elif type(tempCell.value) is str:
                 (name, value) = file_constants.CELL_NG_NAME + str(index), -1
             elif tempCell.value > value:
