@@ -6,3 +6,4 @@ CELL_SAMPLE_NAME = "sample type"
 CELL_NG_NAME = "ng/ul e"
 CELL_BIS_NAME = "bm code bis"
 EXTRACTION_FIRST = 1
+NO_NAME = "-11"

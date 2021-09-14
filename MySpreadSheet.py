@@ -18,6 +18,7 @@ class MySpreadSheet:
         print(Messages.MESS_WRITTING)
 
         sheet: Worksheet
+        sheet_name = self.__get_real_name(sheet_name)
         sheet = self.doc[sheet_name]
 
         cell: Cell
@@ -29,10 +30,10 @@ class MySpreadSheet:
         return
 
     def get_ids_form_sheet_name(self, sheet_name: str, cell_value: str) -> (list, bool):
-        try:
-            sheet = self.doc[sheet_name]
-        except:
-            return  (None, False)
+        name = self.__get_real_name(sheet_name)
+        sheet = self.doc[name]
+        if name == file_constants.NO_NAME:
+            return (None, False)
 
         valid_cells = []
         (row, col, isValue) = self.__get_row_column_by_value(cell_value, sheet)
@@ -43,6 +44,17 @@ class MySpreadSheet:
                 valid_cells.append(sheet_row)
 
         return (valid_cells, True)
+
+    def __get_real_name(self, sheet_name: str) -> str:
+        real_name= file_constants.NO_NAME
+        for name in self.doc.sheetnames:
+            lower_name = name.lower()
+            if lower_name == sheet_name:
+                real_name = name
+                return real_name
+
+        return real_name
+
 
     def __get_row_column_by_value(self, cell_value: str, sheet) -> (int, int, bool):
         col = 0

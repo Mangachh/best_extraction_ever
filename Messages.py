@@ -8,6 +8,7 @@ END = "Pues ya está. Si Tenias la hoja abierta, ciérrala SIN guardar los cambi
 
 PRESS_KEY_EXIT = "Presiona cualquier tecla para salir"
 
+
 PATH_ERROR_FILE = "El archivo no existe."
 PATH_ENTER = "Introduce la ruta completa del archivo."
 PATH_CORRECT = "El archivo es correcto."
