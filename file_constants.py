@@ -7,3 +7,5 @@ CELL_NG_NAME = "ng/ul e"
 CELL_BIS_NAME = "bm code bis"
 EXTRACTION_FIRST = 1
 NO_NAME = "-11"
+NO_VOL = -1
+POC_NAME = "poc"

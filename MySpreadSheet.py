@@ -140,7 +140,7 @@ class MySpreadSheet:
 
     def __get_best_extraction(self, sheet, row: int, columns: list) -> (str, int):
         # iniciamos tupla, así es más facil
-        (name, value) = ("a", 0)
+        (name, value) = ("No volum", file_constants.NO_VOL)
         index = 0
 
         #por cada columna en la que pillemos algo (oju, esto lo podriamos hacer de otro mod
@@ -149,10 +149,22 @@ class MySpreadSheet:
             tempCell = sheet.cell(row, col)
             if tempCell.value is None:
                 break
-            elif sheet.cell(row, col - 1).value is not None:
-                continue
             elif type(tempCell.value) is str:
-                (name, value) = file_constants.CELL_NG_NAME + str(index), -1
+                continue
+            elif sheet.cell(row, col - 1).value is not None:
+                value_name = sheet.cell(row, col - 1).value
+
+                if type(value_name) is not str:
+                    continue
+
+                value_name = value_name.lower()
+
+                if file_constants.POC_NAME in value_name:
+                    if value < 0 and tempCell.value > abs(value):
+                        (name, value) = file_constants.CELL_NG_NAME + str(index), - tempCell.value
+                    else:
+                        (name, value) = file_constants.CELL_NG_NAME + str(index), - tempCell.value
+
             elif tempCell.value > value:
                 (name, value) = file_constants.CELL_NG_NAME + str(index), tempCell.value
 
