@@ -27,7 +27,7 @@ class MySpreadSheet:
 
             last_value = sheet.cell(cell.row, cell.column + file_constants.MAX_VARS).value
 
-            # pillamos la última celda porque, depende del valor, ponemos una obsercación
+            # pillamos la última celda porque, depende del valor, ponemos una observación
             # si es -1 no hay valor, si es <0 tiene poco volumen y si es 0 es epicentre
             if last_value == -1:
                 sheet.cell(cell.row, cell.column + file_constants.MAX_VARS + 1).value = file_constants.NO_VOL_NAME
@@ -44,7 +44,10 @@ class MySpreadSheet:
     # como constante, lo usamos como variable en la función, por si hay que cambiar
     def get_ids_form_sheet_name(self, sheet_name: str, cell_value: str) -> (list, bool):
         name = self.__get_real_name(sheet_name)
-        sheet = self.doc[name]
+        try:
+            sheet = self.doc[name]
+        except:
+            return (None, False)
 
         # si no hay nombre, devolvemos lista vacía y un false
         if name == file_constants.NO_NAME:
@@ -99,7 +102,6 @@ class MySpreadSheet:
                     break
 
         # también devolvemos la columna
-        # TODO cambiar el nombre de la función
         return (row, col, isValue)
 
     # pilla la lista completa de lo que nos interesa, esta es la fnción principal
@@ -185,7 +187,7 @@ class MySpreadSheet:
             if tempCell.value is None:
                 continue
             elif type(tempCell.value) is str:
-                if file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
+                if best_value == file_constants.NO_VOL and file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
                     (name, best_value) = file_constants.CELL_NG_NAME + str(index), file_constants.EPI_VOL
 
                 continue

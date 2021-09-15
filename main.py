@@ -4,6 +4,7 @@ import file_constants
 from MySpreadSheet import MySpreadSheet
 
 
+debug = True
 
 #metemos bienvenida
 print(Messages.WELCOME)
@@ -20,13 +21,16 @@ isCorrectFile = False
 while isCorrectFile == False:
 
     print(Messages.PATH_ENTER)
-    path = input(">>")
-    # OJUUUUUU DEBUG!!!
-    # path = r"C:\Users\manga\Downloads\3. INVENTARI EXTRACCIONS_06.08.21_copiaNH.xlsx"
-    # OJUUUUU DEBUG!!!!
+
+    if debug:
+        input("DEBUG MODE!!! Uso del path por defecto! Presiona una tecla para continuar")
+        path = r"C:\Users\manga\Downloads\3. INVENTARI EXTRACCIONS_06.08.21_copiaNH.xlsx"
+    else:
+        path = input(">>")
+
     (spread, isCorrectFile) = file_io.get_workbook(path)
 
-    if(isCorrectFile == False):
+    if not isCorrectFile:
         print(Messages.PATH_ERROR_FILE)
     else:
         myDoc = MySpreadSheet(spread)
