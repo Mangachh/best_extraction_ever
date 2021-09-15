@@ -173,7 +173,7 @@ class MySpreadSheet:
     # TODO cambiar partes del excel, meter textos del excel como constantes a seleccionar.
     def __get_best_extraction(self, sheet, row: int, columns: list) -> (str, int):
         # iniciamos tupla, así es más facil
-        (name, best_value) = ("No volum", file_constants.NO_VOL)
+        (name, best_value) = (file_constants.NO_VOL_NAME, file_constants.NO_VOL)
         index = 0
 
         #por cada columna en la que pillemos algo (oju, esto lo podriamos hacer de otro modo pero lo dejamos así)
@@ -189,21 +189,19 @@ class MySpreadSheet:
             elif type(tempCell.value) is str:
                 if best_value == file_constants.NO_VOL and file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
                     (name, best_value) = file_constants.CELL_NG_NAME + str(index), file_constants.EPI_VOL
-
                 continue
             elif sheet.cell(row, col - 1).value is not None:
-
                 # pillamos la columna anterior al "ng/ul E1" que debería ser "VOL. NO DISPONIBLE"
-                # si no hay valor, nos da igual lo que saltga
-                # sin embargo, en algunas extracciones esa columna no existe... Ju_u
+                # sin embargo, en algunas extracciones esa columna no existe asi que HAY QUE CREARLA!!!... Ju_u
                 best_value_name = sheet.cell(row, col - 1).value
 
                 # si no es texto, da igual y seguimos, esta comprobación es importante porque, como he dicho arriba
                 # a veces hay números u otras cosas porque no funca bien la columna
                 if type(best_value_name) is str:
+                    best_value_name = best_value_name.lower()
                     # si la cadena incluye "poc" comprobamos valores
                     # metemos como absoluto el valor
-                    if file_constants.POC_NAME.lower() in best_value_name.lower():
+                    if file_constants.POC_NAME.lower() in best_value_name:
                         if tempCell.value > abs(best_value):
                             (name, best_value) = file_constants.CELL_NG_NAME + str(index), - tempCell.value
                         #end
