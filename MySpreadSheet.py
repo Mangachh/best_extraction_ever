@@ -2,6 +2,7 @@ from openpyxl.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.cell.cell import Cell
 import Messages
+import string_compares
 import file_constants
 
 
@@ -11,38 +12,56 @@ class MySpreadSheet:
         self.doc = spread
         return
 
-    # setea los valores en el documento
     def set_values_to_document(self, sheet_name: str, full_data: dict):
+        '''Setea los valores en el documento'''
         print(Messages.MESS_WRITTING)
 
-        # declaramos para poder pillar autocomplete, este el sheet donde guardamos los valores
+        # declaramos para poder pillar autocomplete, como guardamos los valores en el mismo sheet
+        # que hemos abierto, pillamos las cosas de aquí
         sheet: Worksheet
         sheet_name = self.__get_real_name(sheet_name)
         sheet = self.doc[sheet_name]
+        self.__populate_sheet(sheet, full_data)
 
+    def __populate_sheet(self, sheet: Workbook, full_data: dict) -> None:
+        '''Rellena las celdas del sheet con los valores del diccionario.
+           Tiene el control de errores para tratar con las idisiosincrasias del programa'''
+        # el diccionario tiene todos los datos... esto lo pondremos en t
         cell: Cell
         for cell in full_data:
-            for i in range(len(full_data[cell])):
-                sheet.cell(cell.row, cell.column + i + 1).value = full_data[cell][i]
+            index = 0
+            # vale, esto imprime los valores por columnas
+            for data in full_data[cell]:
 
-            last_value = sheet.cell(cell.row, cell.column + file_constants.MAX_VARS).value
+                # sumamos 1 porque el cell que pillamos es el del valor por defecto
+                sheet.cell(cell.row, cell.column + index + 1).value = data
+                print("Data written: ", data)
+                index += 1
 
             # pillamos la última celda porque, depende del valor, ponemos una observación
+            # como los datos no están unificados tenemos que hacer toda esta magia.
             # si es -1 no hay valor, si es <0 tiene poco volumen y si es 0 es epicentre
-            if last_value == -1:
-                sheet.cell(cell.row, cell.column + file_constants.MAX_VARS + 1).value = file_constants.NO_VOL_NAME
-            elif last_value < 0:
-                sheet.cell(cell.row, cell.column + file_constants.MAX_VARS + 1).value = file_constants.POC_NAME_FULL
-            elif last_value == 0:
-                sheet.cell(cell.row, cell.column + file_constants.MAX_VARS + 1).value = file_constants.SALIVA_EPI
-
+            last_value = sheet.cell(cell.row, cell.column + file_constants.MAX_VARS).value
+            observation_mess = self.__observation_message(last_value)
+            sheet.cell(cell.row, cell.column + file_constants.MAX_VARS + 1, observation_mess)
             Messages.print_full(cell.value, full_data[cell][0], full_data[cell][1], full_data[cell][2], full_data[cell][3])
-        return
 
-    # pilla los valores que hemos dado desde una hoja a la que hemos dado el nombre
-    # como nombre usaremos por defecto file_constatns.SHEET_NAME, en vez de hacerlo
-    # como constante, lo usamos como variable en la función, por si hay que cambiar
+    def __observation_message(self, value_to_check) -> str:
+        observation_mess =""
+        if value_to_check == -1 or value_to_check is None:
+            observation_mess = file_constants.NO_VOL_NAME
+        elif value_to_check < 0:
+            observation_mess = file_constants.POC_NAME_FULL
+        elif value_to_check == 0:
+            observation_mess = file_constants.SALIVA_EPI
+        else:
+            observation_mess = "Succes" # lo ponemos para debuggear
+        return observation_mess
+
     def get_ids_form_sheet_name(self, sheet_name: str, cell_value: str) -> (list, bool):
+        '''Pilla los valores que hemos dado desde una hoja a la que hemos dado el nombre.
+           como nombre usaremos por defecto file_constatns.SHEET_NAME, en vez de hacerlo
+           como constante, lo usamos como variable en la función, por si hay que cambiarlo'''
         name = self.__get_real_name(sheet_name)
         try:
             sheet = self.doc[name]
@@ -65,46 +84,45 @@ class MySpreadSheet:
         return (valid_cells, True)
 
     # TODO cambiar nombre de la función por __get_real_sheet_name
-    # devuelve el nombre verdadero de la hoja
-    # hace una comparación entre el nombre de la hoja en minúscula
-    # y el que usamos nosotros en minúscula
-    # para luego devolver el nombre verdadero a partir del que hemos dado
-    # ej: nombre_hoja = "HoLa"; nombre del argumento = "Hola"
-    # así, esto devuelve  "HoLa"
+
     def __get_real_name(self, sheet_name: str) -> str:
-        real_name= file_constants.NO_NAME
+        '''devuelve el nombre verdadero de la hoja hace una comparación entre el nombre de la hoja en minúscula
+           y el que usamos nosotros en minúscula para luego devolver el nombre verdadero a partir del que hemos dado
+           ej: nombre_hoja = "HoLa"; nombre del argumento = "Hola"
+           así, esto devuelve  "HoLa"'''
+        real_name = file_constants.NO_NAME
+
         for name in self.doc.sheetnames:
-            if name.lower() == sheet_name.lower():
-                real_name = name
-                return real_name
+            if string_compares.equal_strings_not_case(name, sheet_name):
+                return name
 
         return real_name
 
-    # devuelve la fila y la columna que tenga el valor que hemos pasado.
-    # OJU! si hay varias celdas con el mismo valor, devuelve la primera de ellas
     def __get_row_column_by_value(self, cell_value: str, sheet) -> (int, int, bool):
+        '''devuelve la fila y la columna que tenga el nombre que hemos pasado.
+        OJU! si hay varias celdas con el mismo valor, devuelve la primera de ellas
+        :param cell_value: el nombre de la celda
+        :param sheet: hoja a mirar
+        :return: fila, columna y si tiene valor
+        '''
         col = 0
         row = 0
-        isValue = False
+        is_value = False
 
         # por cada tupla de celdas en una sheet (cell_tuple)
         for cell_tp in sheet.rows:
-            if isValue == True:
-                break
 
             # por cada celda singular dentro de la tupla (cell_singular)
             for cell_sn in cell_tp:
                 name = str(cell_sn.value).lower()
                 if name == cell_value:
-                    isValue = True
-                    col = cell_sn.column
-                    row = cell_sn.row
-                    break
+                    # si los nombres coinciden, pasamos las coordenadas
+                    return (cell_sn.row, cell_sn.column, True)
 
         # también devolvemos la columna
-        return (row, col, isValue)
+        return (row, col, is_value)
 
-    # pilla la lista completa de lo que nos interesa, esta es la fnción principal
+    # pilla la lista completa de lo que nos interesa, esta es la función principal
     # metemos en un dict la id que hemos metido como clave
     # y como valor es una tupla con (BMCODE, tipo extracción [sangre, ...] número extraccón [e1, e2, ...], y volumen)
     def get_complete_list(self, sheet, ids: list) -> dict:
@@ -124,6 +142,7 @@ class MySpreadSheet:
 
         #ahora el número de las columnas donde estan las extracciones
         extract_cols = self.__get_all_ng_columns(sheet, file_constants.CELL_NG_NAME)
+
         # ahora, por cada fila de la columna del esquimot, miramos si el valor es igual a cualquiera de la lista
         # sumamos uno al row porque doy por hecho que la primera fila es la del título.
         for cells in sheet.iter_rows(min_row=row+1, min_col=hcCol, max_col=hcCol):
@@ -138,7 +157,6 @@ class MySpreadSheet:
                     bmCell: Cell
                     samCell: Cell
                     bisCell: Cell
-
                     # pillamos el bm y el tipo de extracción
                     bmCell = sheet.cell(cells[0].row, bmCol)
                     samCell = sheet.cell(cells[0].row, samCol)
@@ -150,12 +168,12 @@ class MySpreadSheet:
                     bisCell = sheet.cell(cells[0].row, bisCol)
 
                     # printeamos lo que hemos pillado
-                    Messages.print_full(myIds[0].value, bmCell.value, samCell.value, ext_name, ext_value, (bisCell.value is None) == False)
+                    Messages.print_full(myIds[0].value, bmCell.value, samCell.value, ext_name, ext_value, (bisCell.value is not None))
 
                     # si bisCell tiene valor, significa que este HC tiene varios bm, así que miramos si está en el diccionario
                     if bisCell.value is not None:
                         # si esta en el dicc, comprobamos el valor de la extracción
-                        # TODO meter un tipo de constantes para esto o algo así
+                        # TODO meter un tipo de constantes para esto o algo así, estaría bien porque no me entero
                         if final_dict.__contains__(myIds[0]) and final_dict[myIds[0]][3] > ext_value:
                             continue
 
@@ -175,19 +193,18 @@ class MySpreadSheet:
         # iniciamos tupla, así es más facil
         (name, best_value) = (file_constants.NO_VOL_NAME, file_constants.NO_VOL)
         index = 0
-
         #por cada columna en la que pillemos algo (oju, esto lo podriamos hacer de otro modo pero lo dejamos así)
         for col in columns:
             index += 1
             tempCell = sheet.cell(row, col)
-
+            print(f"Value {index}: {tempCell.value}")
             # si no hay valor seguimos.
             # realmente antes había un break y parábamos, pero prefiero continuar
             # para pillar algún error, en plan, extracción e2 no tiene valor pero e3 sí
             if tempCell.value is None:
                 continue
             elif type(tempCell.value) is str:
-                if best_value == file_constants.NO_VOL and file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
+                if best_value == file_constants.NO_VOL and string_compares.file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
                     (name, best_value) = file_constants.CELL_NG_NAME + str(index), file_constants.EPI_VOL
                 continue
             elif sheet.cell(row, col - 1).value is not None:
@@ -211,21 +228,26 @@ class MySpreadSheet:
             elif tempCell.value > best_value:
                 (name, best_value) = file_constants.CELL_NG_NAME + str(index), tempCell.value
 
+        print(f"Best value: {best_value}")
         return (name, best_value)
 
-    # pilla los index de todas las columans que tienen el nombre seleccionado
     def __get_all_ng_columns(self, sheet, name) -> list:
+        '''
+        pilla los index de todas las columans que tienen el nombre seleccionado
+        :param sheet: hoja donde pillamos los datos, cambiar
+        :param name: nombre lo que nos interesa
+        :return: lista con los índices
+        '''
         index = file_constants.EXTRACTION_FIRST
-        hasData = True
+        has_data = True
         columns = []
 
-        while hasData:
-            cellValue = name + str(index)
-            (row, col, hasData) = self.__get_row_column_by_value(cellValue, sheet)
+        while has_data and index < file_constants.MAX_VARS:
+            cell_value = name + str(index)
+            print("data: ", cell_value)
+            (row, col, hasData) = self.__get_row_column_by_value(cell_value, sheet)
             index += 1
             if hasData:
                 columns.append(col)
-            else:
-                break
 
         return columns

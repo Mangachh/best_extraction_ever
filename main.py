@@ -24,7 +24,7 @@ while isCorrectFile == False:
 
     if debug:
         input("DEBUG MODE!!! Uso del path por defecto! Presiona una tecla para continuar")
-        path = r"C:\Users\manga\Downloads\3. INVENTARI EXTRACCIONS_06.08.21_copiaNH.xlsx"
+        path = r"C:\Users\manga\Desktop\Copia3_3. INVENTARI EXTRACCIONS_06.08.21_copiaNH.xlsx"
     else:
         path = input(">>")
 
@@ -44,7 +44,7 @@ if(isCorrectFile == False):
 else:
     #si tiene el nombre correcto y hemos pillado id's, tonces ahora viene lo chungo-chungo, pillar las bm
     dict_full = myDoc.get_complete_list(myDoc.doc.worksheets[0], myIds)
-
+    print(f"Diccionario:{dict_full}")
     #borramos el diccionario porque no nos interesa
     myIds.clear()
 
