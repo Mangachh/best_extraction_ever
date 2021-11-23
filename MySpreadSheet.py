@@ -16,6 +16,7 @@ class MySpreadSheet:
 
     _POS_HC = 0
     _POS_BM = 1
+    _POS_EXTRACTION = 2
     _POS_BIS = 2
 
     _POS_DEF_DICT = 0
@@ -64,7 +65,7 @@ class MySpreadSheet:
         for cell in full_data:
             full = ""
             index = 1
-            print("Full data: ", full_data)
+            #print("Full data: ", full_data)
 
             # por cada celda-user, miramos las 3 listas que henos metidos
             for values_list in full_data[cell]:
@@ -76,14 +77,6 @@ class MySpreadSheet:
                     print("Escribiendo Valor: ", str(def_value))
 
             Messages.print_value_inside_border(full)
-        return
-        # vale, esto imprime los valores por columnas
-        for data in full_data[cell]:
-
-            # sumamos 1 porque el cell que pillamos es el del valor por defecto
-            sheet.cell(cell.row, cell.column + index + 1).value = data
-            print("Data written: ", data)
-            index += 1
 
 
     # TODO: esto en otra clase -> Registrar Clase
@@ -196,13 +189,7 @@ class MySpreadSheet:
                     continue
 
                 if cells[0].value == user_id[0].value:
-                    # miramos si tiene "BM Bis Code" para saber si está repetido
-                    bis_cell = sheet.cell(cells[0].row, def_columns[self._POS_BIS])
-                    if bis_cell.value is not None:
-                        # si esta en el dicc, comprobamos el valor de la extracción
-                        # TODO meter un tipo de constantes para esto o algo así, estaría bien porque no me entero
-                        if user_id[0] in final_dict and final_dict[user_id[0]][3] > ext_value:
-                            continue
+
 
                     # declaramos celdas para bm, sample y si hay bisBM (así tenemos autocomplete)
                     bm_cell: Cell
@@ -215,6 +202,17 @@ class MySpreadSheet:
 
                     # ahora hacemos una tupla, pillamos la mejor extracción y sacamos el identificadr ("e1, e2, etc")
                     (ext_name, ext_value) = self.__get_best_extraction(sheet, cells[0].row, extract_cols)
+
+                    # miramos si tiene "BM Bis Code" para saber si está repetido
+                    bis_cell = sheet.cell(cells[0].row, def_columns[self._POS_BIS])
+                    if bis_cell.value is not None:
+                        # si esta en el dicc, comprobamos el valor de la extracción
+                        # TODO meter un tipo de constantes para esto o algo así, estaría bien porque no me entero
+                        try:
+                            if user_id[0] in final_dict and final_dict[user_id[0]][self._POS_DEF_DICT][self._POS_EXTRACTION] > ext_value:
+                                continue
+                        except Exception:
+                            print(f"Error on: {user_id[0]}")
 
                     # como los datos del excel no están unificados, pillamos el valor de la extracción para escribir
                     # un mensaje
