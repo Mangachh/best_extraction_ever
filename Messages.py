@@ -23,6 +23,7 @@ MESS_NOT_FOUND_COLUMN ="No se ha encontrado la columna \"BUSCAR\" en la hoja \"L
 BORDER = "+-----------------------------------------------------+"
 
 def print_value_inside_border(value):
+    __print_border(value)
     value = "|" + str(value)
     for i in range(len(BORDER)):
         if len(value) < i:
@@ -30,7 +31,8 @@ def print_value_inside_border(value):
 
     value += "|"
     print(value)
-    return
+    __print_border(value)
+    print()
 
 
 def print_full(esq_code, bm_code, tipe, extrac, ext_value, isRep = False):

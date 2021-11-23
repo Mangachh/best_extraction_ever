@@ -1,12 +1,19 @@
 
 # TODO: Meter una comprobación de path aquí mismo. 2 partes: el formato es buen y que el path existe!
 
+# metemos lo de pillar regex aquí, sólo porque no sé donde meterlo
+import re
+
 __INPUT_PROMPT = ">>"
 
 __MESS_NO_INT = "Sólo están permitidos números enteros."
 __MES_NO_FLOAT = "Sólo están permitidos números decimales."
 __MES_NO_SINGLE = "Sólo está permitido introducir un carácter"
 __MES_NO_LETTER = "Sólo se permite introducir una letra."
+
+
+
+
 
 def ask_integer(header_mess: str, error_mess:str = __MESS_NO_INT) -> int:
     '''
