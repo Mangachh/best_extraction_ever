@@ -4,7 +4,7 @@ import file_constants
 from MySpreadSheet import MySpreadSheet
 
 
-debug = True
+debug = False
 
 #metemos bienvenida
 print(Messages.WELCOME)
