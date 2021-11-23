@@ -325,7 +325,7 @@ class MySpreadSheet:
             if tempCell.value is None:
                 continue
             elif type(tempCell.value) is str:
-                if best_value == file_constants.NO_VOL and string_compares.file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
+                if best_value == file_constants.NO_VOL and file_constants.SALIVA_EPI.lower() in tempCell.value.lower():
                     (name, best_value) = file_constants.CELL_NG_NAME + str(index), file_constants.EPI_VOL
                 continue
             elif sheet.cell(row, col - 1).value is not None:
