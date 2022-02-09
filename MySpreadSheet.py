@@ -362,7 +362,7 @@ class MySpreadSheet:
         has_data = True
         columns = []
 
-        while has_data and index < file_constants.MAX_VARS:
+        while has_data and index <= file_constants.MAX_VARS:
             cell_value = name + str(index)
             print("data: ", cell_value)
             (row, col, hasData) = self.__get_row_column_by_value(cell_value, sheet)
