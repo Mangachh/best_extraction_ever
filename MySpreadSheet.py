@@ -26,7 +26,7 @@ class MySpreadSheet:
     def __init__(self, spread: Workbook):
         self.doc = spread
         self.absolute_search = [file_constants.CELL_SAMPLE_NAME]
-        self.relative_search = ["Núm. Caixa $", "260/280 $", "260/230 $"]
+        self.relative_search = ["Núm. Caixa $", "260/280 $", "260/230 $", "Vol. El $ (uL)"]
         self.default_labels = ["BM Code", "Ext ID", "Ext value", "State"]
         return
 
@@ -153,7 +153,7 @@ class MySpreadSheet:
 
             # por cada celda singular dentro de la tupla (cell_singular)
             for cell_sn in cell_tp:
-                name = str(cell_sn.value).lower()
+                name = str(cell_sn.value).lower().strip()
                 if name == cell_value:
                     # si los nombres coinciden, pasamos las coordenadas
                     return cell_sn.row, cell_sn.column, True

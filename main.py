@@ -24,7 +24,7 @@ while isCorrectFile == False:
 
     if debug:
         input("DEBUG MODE!!! Uso del path por defecto! Presiona una tecla para continuar")
-        path = r"C:\Users\manga\Desktop\Copia3_3. INVENTARI EXTRACCIONS_06.08.21_copiaNH.xlsx"
+        path = r"C:\Users\manga\Downloads\Copia3_3.INVENTARI EXTRACCIONS_06.08.21_copiaNH.xlsx"
     else:
         path = input(">>")
 
