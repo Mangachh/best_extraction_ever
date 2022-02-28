@@ -27,6 +27,7 @@ class MySpreadSheet:
         self.doc = spread
         self.absolute_search = [file_constants.CELL_SAMPLE_NAME]
         self.relative_search = ["Núm. Caixa $", "260/280 $", "260/230 $", "Vol. El $ (uL)", "Vol (≈) $"]
+        print("")
         self.default_labels = ["BM Code", "Ext ID", "Ext value", "State"]
         return
 
