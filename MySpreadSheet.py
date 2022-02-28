@@ -26,7 +26,7 @@ class MySpreadSheet:
     def __init__(self, spread: Workbook):
         self.doc = spread
         self.absolute_search = [file_constants.CELL_SAMPLE_NAME]
-        self.relative_search = ["Núm. Caixa $", "260/280 $", "260/230 $", "Vol. El $ (uL)"]
+        self.relative_search = ["Núm. Caixa $", "260/280 $", "260/230 $", "Vol. El $ (uL)", "Vol (≈) $"]
         self.default_labels = ["BM Code", "Ext ID", "Ext value", "State"]
         return
 
@@ -295,9 +295,14 @@ class MySpreadSheet:
             full_name = identifier.join(field.split("$"))
             print("Relative column name: ", full_name)
             (row, col, isValue) = self.__get_row_column_by_value(full_name.lower(), sheet)
-            value = sheet.cell(id_row, col).value
-            print("Value: ", value)
-            relative_values.append(value)
+
+            if isValue:
+                value = sheet.cell(id_row, col).value
+                print("Value: ", value)
+                relative_values.append(value)
+            else:
+                relative_values.append("")
+                print("No value found.")
 
         return relative_values
 
